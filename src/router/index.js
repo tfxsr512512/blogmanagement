@@ -1,4 +1,5 @@
 import { createRouter, createWebHistory } from 'vue-router'
+import { useUserStore } from '@/stores'
 
 // console.log(import.meta.env.MODE)
 // vite中的环境变量 import.meta.env.BASE_URL   就是 vite.config.js 中的 base 配置项
@@ -28,12 +29,19 @@ const router = createRouter({
           component: () => import('@/views/user/UserAvatar.vue')
         },
         {
-          path: '/user/poassword',
+          path: '/user/password',
           component: () => import('@/views/user/UserPassword.vue')
         }
       ]
     }
   ]
+})
+
+// 登录访问拦截
+router.beforeEach((to) => {
+  // 如果没有token，且访问的是非登录页，拦截到登录，其他情况正常放行
+  const useStore = useUserStore()
+  if (!useStore.token && to.path !== '/login') return '/login'
 })
 
 export default router
